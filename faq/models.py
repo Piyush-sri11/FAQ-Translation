@@ -33,13 +33,17 @@ class FAQ(models.Model):
         if lang == "en":
             return {"question": self.question, "answer": self.answer}
         
-        
+        cache_key = f"faq_{self.id}_{lang}"
+        cached_translation = cache.get(cache_key)
+
+        if cached_translation:
+            return cached_translation
         
         # Check if translation exists in the database
         translation = FAQTranslation.objects.filter(faq=self, language=lang).first()
         if translation:
             data = {"question": translation.question, "answer": translation.answer}
-            
+            cache.set(cache_key, data, timeout=3600)  # Store in Redis for 1 hour
             return data
 
         # If translation does not exist, generate dynamically
@@ -53,13 +57,25 @@ class FAQ(models.Model):
 
             data = {"question": translated_question, "answer": translated_answer}
 
-            
+            # Store in Redis for faster access
+            cache.set(cache_key, data, timeout=3600)
             return data
         
         except Exception as e:
             print(f"Translation Error: {e}")
             return {"question": self.question, "answer": self.answer}  # Fallback to English
         
+
+    def clear_faq_cache(self):
+        """Clear all cached translations for this FAQ."""
+        redis_conn = get_redis_connection("default")
+        keys = redis_conn.keys(f"faq_{self.id}_*")  # Find all keys for this FAQ
+        if keys:
+            redis_conn.delete(*keys)  # Delete all keys
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.clear_faq_cache()
 
     
 
