@@ -140,9 +140,7 @@ flake8
 ### **Defined Pytests**
 
 - **Test for FAQ Retrieval**
-- 
 - **Test for Adding a New FAQ**
-- 
 - **Test for Cached Translation Retrieval**
 
 
