@@ -139,11 +139,11 @@ flake8
 
 ### **Defined Pytests**
 
-- #### **Test for FAQ Retrieval**
+- **Test for FAQ Retrieval**
 - 
-- #### **Test for Adding a New FAQ**
+- **Test for Adding a New FAQ**
 - 
-- #### **Test for Cached Translation Retrieval**
+- **Test for Cached Translation Retrieval**
 
 
 ## 🛠️ Contribution Guidelines
