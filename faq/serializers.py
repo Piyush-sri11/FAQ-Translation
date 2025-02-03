@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import FAQ
 
+
 class FAQSerializer(serializers.ModelSerializer):
     translated_question = serializers.SerializerMethodField()
     translated_answer = serializers.SerializerMethodField()

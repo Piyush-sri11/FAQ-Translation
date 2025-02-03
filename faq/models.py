@@ -5,14 +5,13 @@ from bs4 import BeautifulSoup, NavigableString
 from django.core.cache import cache
 
 
-
 class FAQ(models.Model):
     question = models.TextField()
     answer = RichTextField()
 
     def __str__(self):
         return self.question[:50]
-    
+
     def translate_html_content(self, content, lang):
         """Translate text while keeping HTML tags intact."""
         soup = BeautifulSoup(content, "html.parser")
@@ -25,19 +24,19 @@ class FAQ(models.Model):
                     translated_text = ""
                 element.replace_with(translated_text)
 
-        return str(soup) 
+        return str(soup)
 
     def get_translation(self, lang="en"):
         """Retrieve translation from database or generate dynamically."""
         if lang == "en":
             return {"question": self.question, "answer": self.answer}
-        
+
         cache_key = f"faq_{self.id}_{lang}"
         cached_translation = cache.get(cache_key)
 
         if cached_translation:
             return cached_translation
-        
+
         # Check if translation exists in the database
         translation = FAQTranslation.objects.filter(faq=self, language=lang).first()
         if translation:
@@ -51,7 +50,7 @@ class FAQ(models.Model):
             translated_question = translator.translate(self.question, src="en", dest=lang).text
             translated_answer = self.translate_html_content(self.answer, lang)
 
-                # Save to database
+            # Save to database
             FAQTranslation.objects.create(faq=self, language=lang, question=translated_question, answer=translated_answer)
 
             data = {"question": translated_question, "answer": translated_answer}
@@ -59,24 +58,23 @@ class FAQ(models.Model):
             # Store in Redis for faster access
             cache.set(cache_key, data, timeout=3600)
             return data
-        
+
         except Exception as e:
             print(f"Translation Error: {e}")
             return {"question": self.question, "answer": self.answer}  # Fallback to English
-        
 
     def clear_faq_cache(self):
         """Clear all cached translations for this FAQ."""
-        
         keys = cache.keys(f"faq_{self.id}_*")  # Find all keys for this FAQ
-        if keys:
-            cache.delete(*keys)  # Delete all keys
+        print(keys)
+        for key in keys:
+            cache.delete(key)  # Delete all keys
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.clear_faq_cache()
 
-        default_languages = ["hi","bn"] # Add more languages as needed
+        default_languages = ["hi", "bn"]  # Add more languages as needed
         translator = Translator()
 
         try:
@@ -94,16 +92,12 @@ class FAQ(models.Model):
                 cache_key = f"faq_{self.id}_{lang}"
                 cache.set(cache_key, {"question": translated_question, "answer": translated_answer}, timeout=3600)
 
-        except Exception as e:  
+        except Exception as e:
             print(f"Translation Error: {e}")
-
-        
 
     def delete(self, *args, **kwargs):
         self.clear_faq_cache()
         super().delete(*args, **kwargs)
-
-
 
 
 class FAQTranslation(models.Model):

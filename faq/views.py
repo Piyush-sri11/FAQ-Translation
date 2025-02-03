@@ -7,5 +7,3 @@ class FAQViewSet(viewsets.ReadOnlyModelViewSet):
     """View to handle GET requests for FAQs."""
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
-
-    
