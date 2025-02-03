@@ -92,7 +92,6 @@ GET /api/faqs/
     "id": 1,
     "question": "What is your return policy?",
     "answer": "You can return within 30 days.",
-    "language": "en"
   }
 ]
 ```
@@ -108,7 +107,6 @@ GET /api/faqs/?lang=fr
     "id": 1,
     "question": "Quelle est votre politique de retour ?",
     "answer": "Vous pouvez retourner dans les 30 jours.",
-    "language": "fr"
   }
 ]
 ```
@@ -123,6 +121,30 @@ Admins can add new FAQs through the Django Admin Panel.
 Translations are cached in Redis for faster retrieval.
 
 ---
+
+## Testing
+### **Running Tests**
+
+#### **1. Pytest**
+We use `pytest` for running tests. To run the tests, execute:
+```sh
+pytest --disable-warnings
+```
+
+#### **2. Flake8**
+We use `flake8` for linting the code. To check for linting errors, execute:
+```sh
+flake8
+```
+
+### **Defined Pytests**
+
+- #### **Test for FAQ Retrieval**
+- 
+- #### **Test for Adding a New FAQ**
+- 
+- #### **Test for Cached Translation Retrieval**
+
 
 ## 🛠️ Contribution Guidelines
 We welcome contributions! To contribute:
