@@ -75,6 +75,28 @@ class FAQ(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.clear_faq_cache()
+
+        default_languages = ["hi","bn"] # Add more languages as needed
+        translator = Translator()
+
+        try:
+            for lang in default_languages:
+                translated_question = translator.translate(self.question, src="en", dest=lang).text
+                translated_answer = self.translate_html_content(self.answer, lang)
+
+                # Save translation to database
+                FAQTranslation.objects.update_or_create(
+                    faq=self, language=lang,
+                    defaults={"question": translated_question, "answer": translated_answer}
+                )
+
+                # Cache the translation for faster access
+                cache_key = f"faq_{self.id}_{lang}"
+                cache.set(cache_key, {"question": translated_question, "answer": translated_answer}, timeout=3600)
+
+        except Exception as e:  
+            print(f"Translation Error: {e}")
+
         
 
     def delete(self, *args, **kwargs):
