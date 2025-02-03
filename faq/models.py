@@ -3,7 +3,6 @@ from ckeditor.fields import RichTextField
 from googletrans import Translator
 from bs4 import BeautifulSoup, NavigableString
 from django.core.cache import cache
-from django_redis import get_redis_connection
 
 
 
@@ -68,16 +67,20 @@ class FAQ(models.Model):
 
     def clear_faq_cache(self):
         """Clear all cached translations for this FAQ."""
-        redis_conn = get_redis_connection("default")
-        keys = redis_conn.keys(f"faq_{self.id}_*")  # Find all keys for this FAQ
+        # redis_conn = get_redis_connection("default")
+        keys = cache.keys(f"faq_{self.id}_*")  # Find all keys for this FAQ
         if keys:
-            redis_conn.delete(*keys)  # Delete all keys
+            cache.delete(*keys)  # Delete all keys
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.clear_faq_cache()
+        
 
-    
+    def delete(self, *args, **kwargs):
+        self.clear_faq_cache()
+        super().delete(*args, **kwargs)
+
 
 
 
