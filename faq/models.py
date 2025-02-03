@@ -67,7 +67,7 @@ class FAQ(models.Model):
 
     def clear_faq_cache(self):
         """Clear all cached translations for this FAQ."""
-        # redis_conn = get_redis_connection("default")
+        
         keys = cache.keys(f"faq_{self.id}_*")  # Find all keys for this FAQ
         if keys:
             cache.delete(*keys)  # Delete all keys
