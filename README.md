@@ -90,8 +90,8 @@ GET /api/faqs/
 [
   {
     "id": 1,
-    "question": "What is your return policy?",
-    "answer": "You can return within 30 days.",
+    "question": "What is instgram",
+    "answer": "<p>its a social media platform</p>\r\n\r\n<p>&nbsp;</p>",
   }
 ]
 ```
@@ -105,8 +105,8 @@ GET /api/faqs/?lang=fr
 [
   {
     "id": 1,
-    "question": "Quelle est votre politique de retour ?",
-    "answer": "Vous pouvez retourner dans les 30 jours.",
+    "question": "Qu'est-ce qu'Instagram",
+    "answer": "<p>C'est une plate-forme de médias sociaux</p>\n<p> </p>"
   }
 ]
 ```

@@ -1,0 +1,53 @@
+version: '3.11'
+# Defining the compose version
+services:
+ redis:
+    image: "redis:alpine"
+    ports:
+      - 6379:6379
+    restart: "on-failure"  
+ # Django application
+ web:
+ 
+   # Build context
+   build: .
+   
+   # Build commands
+   command: sh -c "python manage.py makemigrations &&
+                   python manage.py migrate &&
+                   python manage.py collectstatic --noinput &&
+                   gunicorn faq_project.wsgi:application --bind 0.0.0.0:8000"
+                   
+   # Storage volumes
+   volumes:
+     - static_volume:/home/app/web/staticfiles
+     - media_volume:/home/app/web/mediafiles
+     
+   # Exposing port 8000
+   expose: 
+   - 8000
+   restart: "on-failure"
+   depends_on:
+      - redis
+
+  # Nginx server
+ nginx:
+ 
+   # Build context
+   build: ./nginx
+   
+   # Mapping machine and container ports
+   ports:
+     - 1337:80
+     
+   # Storage volumes
+   volumes:
+     - static_volume:/home/app/web/staticfiles
+     - media_volume:/home/app/web/mediafiles
+   depends_on:
+     - web
+   restart: "on-failure"
+
+volumes:
+ static_volume:
+ media_volume:
