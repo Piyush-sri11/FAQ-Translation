@@ -143,6 +143,32 @@ flake8
 - **Test for Adding a New FAQ**
 - **Test for Cached Translation Retrieval**
 
+## 🐳 Docker Usage
+
+### **Building Docker Images**
+To build the Docker images for your application, use the following command:
+```sh
+docker-compose build
+```
+
+### **Starting Containers**
+To start the containers defined in your `compose.yaml` file, use:
+```sh
+docker-compose up
+```
+This command will start all the services defined in the `compose.yaml` file. You can add the `-d` flag to run the containers in detached mode:
+```sh
+docker-compose up -d
+```
+
+### **Stopping and Removing Containers**
+To stop and remove the containers, networks, and volumes defined in your `compose.yaml` file, use:
+```sh
+docker-compose down
+```
+This command will stop and remove all the resources created by `docker-compose up`.
+
+---
 
 ## 🛠️ Contribution Guidelines
 We welcome contributions! To contribute:
